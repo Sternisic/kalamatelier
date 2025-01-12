@@ -1,0 +1,35 @@
+---
+import { getFooterTranslation } from '../i18n/utils';
+
+// Aktuelle Sprache und Footer-Übersetzungen laden
+const locale = Astro.params.locale || 'en';
+const t = getFooterTranslation(locale);
+---
+<footer class="bg-[#D8BFA4] text-[#3D2225] py-6 px-6 font-poppins">
+  <div class="container mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+    <!-- Kontaktinformationen -->
+    <div class="flex flex-col text-center md:text-left">
+      <p class="text-sm font-thin">
+        <strong class="footer-translatable" data-key="tel">{t.tel}</strong> +123 456 789
+      </p>
+      <p class="text-sm font-thin">
+        <strong class="footer-translatable" data-key="email">{t.email}</strong> info@kalamatelier.com
+      </p>
+    </div>
+
+    <!-- Über KALAM -->
+    <div class="text-center">
+      <p class="text-sm font-thin footer-translatable" data-key="about">{t.about}</p>
+    </div>
+
+    <!-- Social Media Icons -->
+    <div class="flex space-x-4">
+      <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
+        <img src="/src/assets/linkedin.png" alt="LinkedIn Logo" class="h-6">
+      </a>
+      <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+        <img src="/src/assets/instagram.png" alt="Instagram Logo" class="h-6">
+      </a>
+    </div>
+  </div>
+</footer>
