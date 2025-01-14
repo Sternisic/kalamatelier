@@ -32,72 +32,84 @@ const navigation: NavigationItem[] = [
   { label: 'over', link: '/over' },
   { label: 'contact', link: '/contact' },
   { label: 'blog', link: '/blog' },
+  
 ];
 
 const locales: Locale[] = ['nl', 'ar', 'en'];
 ---
-<nav class="bg-[#D8BFA4] text-[#3D2225] py-4 px-6 font-poppins relative">
-  <!-- Navigation Kopfbereich -->
-  <div class="relative flex items-center h-16">
+
+<nav class="bg-[#EAE5E2] text-[#3D2225] py-4 px-6 font-poppins relative">
+  <div class="container mx-auto flex items-center justify-center">
+    <!-- Linke Navigation -->
+    <ul class="flex space-x-28 text-lg font-thin">
+      {navigation.slice(0, 3).map((item) => (
+        <li class="relative group">
+          <a href={item.link} class="translatable hover:text-[#B4533A] transition duration-300" data-key={item.label}>
+            {t[item.label]}
+          </a>
+          {item.subitems && (
+            <ul class="absolute left-0 bg-[#EAE5E2] text-left py-2 px-4 shadow-md hidden group-hover:block pt-2 w-64">
+              {item.subitems.map((subitem) => (
+                <li class="hover:text-[#CB895D] transition duration-300">
+                  {subitem.subitems ? (
+                    <div>
+                      <span class="font-bold translatable" data-key={subitem.label}>
+                        {t[subitem.label]}
+                      </span>
+                      <ul class="pl-4 pt-2">
+                        {subitem.subitems.map((nestedSubitem) => (
+                          <li>
+                            <a href={nestedSubitem.link} class="hover:text-[#B4533A]">
+                              {t[nestedSubitem.label]}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <a href={subitem.link} class="translatable" data-key={subitem.label}>
+                      {t[subitem.label]}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))}
+    </ul>
+
     <!-- Logo -->
-    <div class="absolute inset-0 flex justify-center items-center pointer-events-none">
-      <img src="/src/assets/logo.png" alt="KALAM Logo" class="h-16">
+    <div class="mx-40">
+      <img src="/src/assets/logo.png" alt="KALAM Logo" class="h-20">
     </div>
 
-    <!-- Sprachauswahl -->
-    <div class="ml-auto flex space-x-4">
-      {locales.map((loc) => (
-        <a
-          href={`/${loc}`}
-          class={`language-switcher px-3 py-1 rounded-lg ${
-            loc === locale
-              ? 'bg-[#3D2225] text-[#EAE5E2]'
-              : 'hover:bg-[#CB895D] hover:text-[#EAE5E2] transition duration-300'
-          }`}
-          data-locale={loc}
-        >
-          {loc.toUpperCase()}
-        </a>
+    <!-- Rechte Navigation -->
+    <ul class="flex space-x-28 text-lg font-thin">
+      {navigation.slice(3).map((item) => (
+        <li class="relative group">
+          <a href={item.link} class="translatable hover:text-[#B4533A] transition duration-300" data-key={item.label}>
+            {t[item.label]}
+          </a>
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 
-  <!-- Hauptnavigation -->
-  <ul class="flex justify-center space-x-8 text-lg font-thin mt-4">
-    {navigation.map((item) => (
-      <li class="relative group">
-        <a href={item.link} class="translatable" data-key={item.label}>
-          {t[item.label]}
-        </a>
-        {item.subitems && (
-          <ul class="absolute left-1/2 transform -translate-x-1/2 bg-[#EAE5E2] text-left py-2 px-4 shadow-md hidden group-hover:block pt-2 w-64 group-hover:visible">
-            {item.subitems.map((subitem) => (
-              <li class="hover:text-[#CB895D] transition duration-300">
-                {subitem.subitems ? (
-                  <div>
-                    <span class="font-bold translatable" data-key={subitem.label}>
-                      {t[subitem.label]}
-                    </span>
-                    <ul class="pl-4 pt-2">
-                      {subitem.subitems.map((nestedSubitem) => (
-                        <li>
-                          <a href={nestedSubitem.link} class="translatable" data-key={nestedSubitem.label}>
-                            {t[nestedSubitem.label]}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : (
-                  <a href={subitem.link} class="translatable" data-key={subitem.label}>
-                    {t[subitem.label]}
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </li>
+  <!-- Sprachauswahl -->
+  <div class="absolute top-4 right-6 flex space-x-4">
+    {locales.map((loc) => (
+      <a
+        href={`/${loc}`}
+        class={`language-switcher px-3 py-1 rounded-lg ${
+          loc === locale
+            ? 'bg-[#3D2225] text-[#EAE5E2]'
+            : 'hover:bg-[#CB895D] hover:text-[#EAE5E2] transition duration-300'
+        }`}
+        data-locale={loc}
+      >
+        {loc.toUpperCase()}
+      </a>
     ))}
-  </ul>
+  </div>
 </nav>
