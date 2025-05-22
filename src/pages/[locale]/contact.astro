@@ -1,0 +1,100 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getContactTranslation } from '../../i18n/utils';
+import "./../../styles/global.css";
+
+// Unterstützte Sprachen definieren
+export async function getStaticPaths() {
+  return [
+    { params: { locale: 'en' } },
+    { params: { locale: 'nl' } },
+    { params: { locale: 'ar' } },
+  ];
+}
+
+// Aktuelle Sprache aus der URL abrufen
+const locale = Astro.params.locale || 'en'; // Fallback auf Englisch
+const t = getContactTranslation(locale);
+---
+<BaseLayout>
+  <section class="contact-section bg-[#EAE5E2] text-[#3D2225] px-4 md:px-12 lg:px-20 py-12">
+    <div class="flex flex-col md:flex-row items-center justify-around gap-12">
+      <!-- Bild links -->
+      <div class="flex-1 max-w-md md:max-w-lg lg:max-w-2xl">
+        <img
+          src="/src/assets/contact-image.jpg"
+          alt={t.title}
+          class="w-full h-auto object-contain rounded-lg shadow-lg"
+        />
+      </div>
+
+      <!-- Formular rechts -->
+      <div class="flex-1 w-full max-w-lg">
+        <header class="text-3xl md:text-4xl font-bold mb-10 text-center md:text-left">
+          {t.title}
+        </header>
+
+        <form action="/contact/submit" method="post" id="form" class="space-y-6">
+          <!-- Vorname -->
+          <input
+            type="text"
+            id="firstname"
+            name="firstname"
+            required
+            placeholder={t.firstname}
+            class="form-input"
+          />
+
+          <!-- Nachname -->
+          <input
+            type="text"
+            id="lastname"
+            name="lastname"
+            required
+            placeholder={t.lastname}
+            class="form-input"
+          />
+
+          <!-- Betreff -->
+          <input
+            type="text"
+            id="subject"
+            name="subject"
+            required
+            placeholder={t.subject}
+            class="form-input"
+          />
+
+          <!-- E-Mail -->
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder={t.email}
+            class="form-input"
+          />
+
+          <!-- Nachricht -->
+          <textarea
+            id="message"
+            name="message"
+            rows="5"
+            required
+            placeholder={t.message}
+            class="form-textarea"
+          ></textarea>
+
+          <!-- Senden-Button -->
+          <button
+            type="submit"
+            id="submit"
+            class="form-submit"
+          >
+            {t.submit}
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

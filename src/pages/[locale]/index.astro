@@ -1,6 +1,6 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { getTranslation, getNavigationTranslation } from '../i18n/utils';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getTranslation, getNavigationTranslation } from '../../i18n/utils';
 
 // Unterstützte Sprachen für dynamische Routen
 export async function getStaticPaths() {
@@ -17,7 +17,7 @@ const t = getTranslation(locale); // Übersetzungen für die aktuelle Sprache
 const nav = getNavigationTranslation(locale);
 ---
 <script>
-  import { initializeAOS } from '../scripts/aos-init';
+  import { initializeAOS } from '../../scripts/aos-init';
   initializeAOS();
 </script>
 

@@ -1,9 +1,10 @@
 import { navigationTranslations } from '../i18n/navigation';
 import { footerTranslations } from '../i18n/footer';
+import { translations } from '../i18n/translations'; // Importiere die Übersetzungen der Startseite
 
 type Locale = keyof typeof navigationTranslations;
 
-// Animation für das Ersetzen von Navigationstexten
+// Funktion zur Animation von Navigationstexten
 function animateTextChange(locale: Locale) {
   const translatableElements = document.querySelectorAll<HTMLElement>('.translatable');
 
@@ -12,16 +13,12 @@ function animateTextChange(locale: Locale) {
 
     if (!key) return;
 
-    // Text ausblenden
     element.classList.add('text-animate-out');
     setTimeout(() => {
-      // Text aktualisieren
       element.textContent = navigationTranslations[locale][key];
-      // Text einblenden
       element.classList.remove('text-animate-out');
       element.classList.add('text-animate-in');
 
-      // Entferne Einblendungsklasse nach der Animation
       setTimeout(() => {
         element.classList.remove('text-animate-in');
       }, 300);
@@ -29,7 +26,7 @@ function animateTextChange(locale: Locale) {
   });
 }
 
-// Animation für das Ersetzen von Footertexten
+// Funktion zur Animation von Footertexten
 function animateFooterTextChange(locale: Locale) {
   const footerElements = document.querySelectorAll<HTMLElement>('.footer-translatable');
 
@@ -38,16 +35,12 @@ function animateFooterTextChange(locale: Locale) {
 
     if (!key) return;
 
-    // Text ausblenden
     element.classList.add('text-animate-out');
     setTimeout(() => {
-      // Text aktualisieren
       element.textContent = footerTranslations[locale][key];
-      // Text einblenden
       element.classList.remove('text-animate-out');
       element.classList.add('text-animate-in');
 
-      // Entferne Einblendungsklasse nach der Animation
       setTimeout(() => {
         element.classList.remove('text-animate-in');
       }, 300);
@@ -55,7 +48,49 @@ function animateFooterTextChange(locale: Locale) {
   });
 }
 
-// Sprachumschaltung-Handler
+// Funktion zur Animation von Startseitentexten
+function animateHomepageTextChange(locale: Locale) {
+  const homepageElements = document.querySelectorAll<HTMLElement>('.homepage-translatable');
+
+  homepageElements.forEach((element) => {
+    const key = element.dataset.key as keyof typeof translations['en']['site'];
+
+    if (!key) return;
+
+    element.classList.add('text-animate-out');
+    setTimeout(() => {
+      element.textContent = translations[locale].site[key];
+      element.classList.remove('text-animate-out');
+      element.classList.add('text-animate-in');
+
+      setTimeout(() => {
+        element.classList.remove('text-animate-in');
+      }, 300);
+    }, 300);
+  });
+}
+
+function animateContactTextChange(locale: Locale) {
+  const contactElements = document.querySelectorAll<HTMLElement>('.contact-translatable');
+
+  contactElements.forEach((element) => {
+    const key = element.dataset.key as keyof typeof translations['en']['contact'];
+
+    if (!key) return;
+
+    element.classList.add('text-animate-out');
+    setTimeout(() => {
+      element.textContent = translations[locale].contact[key];
+      element.classList.remove('text-animate-out');
+      element.classList.add('text-animate-in');
+
+      setTimeout(() => {
+        element.classList.remove('text-animate-in');
+      }, 300);
+    }, 300);
+  });
+}
+
 document.querySelectorAll('.language-switcher').forEach((el) => {
   el.addEventListener('click', (e) => {
     e.preventDefault();
@@ -64,24 +99,25 @@ document.querySelectorAll('.language-switcher').forEach((el) => {
 
     if (!locale) return;
 
-    // Navigation aktualisieren
-    animateTextChange(locale);
+    // Aktualisiere Navigation, Footer und andere Abschnitte
+    animateTextChange(locale); // Navigation
+    animateFooterTextChange(locale); // Footer
+    animateHomepageTextChange(locale); // Homepage
+    animateContactTextChange(locale); // Contact-Seite
 
-    // Footer aktualisieren
-    animateFooterTextChange(locale);
-
-    // Aktive Sprache visuell aktualisieren
-    document.querySelectorAll('.language-switcher').forEach((link) => {
-      link.classList.remove('bg-[#3D2225]', 'text-[#EAE5E2]');
-      link.classList.add('hover:bg-[#CB895D]', 'hover:text-[#EAE5E2]');
-    });
-
-    target.classList.add('bg-[#3D2225]', 'text-[#EAE5E2]');
-    target.classList.remove('hover:bg-[#CB895D]', 'hover:text-[#EAE5E2]');
-
-    // URL aktualisieren
-    setTimeout(() => {
-      window.history.pushState({}, '', `/${locale}`);
-    }, 600);
+    // URL ohne Neuladen aktualisieren
+    const currentPath = window.location.pathname.replace(/^\/[a-z]{2}/, '');
+    window.history.pushState({}, '', `/${locale}${currentPath}`);
   });
+});
+
+// Funktion zum Wiederherstellen der Ansicht bei Navigation
+window.addEventListener('popstate', () => {
+  const currentLocale = window.location.pathname.split('/')[1] as Locale;
+  if (!currentLocale) return;
+
+  animateTextChange(currentLocale); // Navigation
+  animateFooterTextChange(currentLocale); // Footer
+  animateHomepageTextChange(currentLocale); // Homepage
+  animateContactTextChange(currentLocale); // Contact-Seite
 });

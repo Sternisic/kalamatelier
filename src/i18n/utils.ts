@@ -1,32 +1,31 @@
-import { translations } from './translations'; // Importiere allgemeine Übersetzungen
+import { translations } from './translations';
 import { navigationTranslations } from './navigation';
 import { footerTranslations } from './footer';
-import type { FooterLocale } from './footer';
-import type { Locale } from './translations';
-
-// Unterstützte Sprachen und Fallback
-const fallbackLocale: Locale = 'en';
-const supportedLocales: Locale[] = ['en', 'nl', 'ar'];
+import { contactTranslations } from './contact';
+import { locales } from './config';
+import type { Locale } from './config';
 
 // Allgemeine Funktion zur Sprachwahl
-function getSelectedLocale(locale: string): Locale {
-  return supportedLocales.includes(locale as Locale) ? (locale as Locale) : fallbackLocale;
+export function getSelectedLocale(locale?: string): Locale {
+  return locales.includes(locale as Locale) ? (locale as Locale) : 'en';
 }
 
 // Allgemeine Übersetzungen für Inhalte
-export function getTranslation(locale: string) {
-  const selectedLocale: Locale = getSelectedLocale(locale);
-  return translations[selectedLocale];
+export function getTranslation(locale?: string) {
+  return translations[getSelectedLocale(locale)];
 }
 
 // Übersetzungen für die Navigation
-export function getNavigationTranslation(locale: string) {
-  const selectedLocale: Locale = getSelectedLocale(locale);
-  return navigationTranslations[selectedLocale];
+export function getNavigationTranslation(locale?: string) {
+  return navigationTranslations[getSelectedLocale(locale)];
 }
 
-// Übersetzungen für den Footer abrufen
-export function getFooterTranslation(locale: string) {
-  const selectedLocale: FooterLocale = getSelectedLocale(locale);
-  return footerTranslations[selectedLocale];
+// Übersetzungen für den Footer
+export function getFooterTranslation(locale?: string) {
+  return footerTranslations[getSelectedLocale(locale)];
+}
+
+// Übersetzungen für Kontakt
+export function getContactTranslation(locale?: string) {
+  return contactTranslations[getSelectedLocale(locale)];
 }

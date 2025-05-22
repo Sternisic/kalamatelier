@@ -3,74 +3,45 @@ import { getNavigationTranslation } from '../i18n/utils';
 import type { Locale, NavigationItem } from '../i18n/navigation';
 import "./../styles/global.css";
 
+// Dynamisch die Sprache und aktuelle URL abrufen
 const locale: Locale = (Astro.params.locale as Locale) || 'en';
+const currentPath = Astro.url.pathname.replace(/^\/([a-z]{2})/, ''); // Serverseitig die aktuelle Route ohne Sprachpräfix
 const t = getNavigationTranslation(locale);
 
 const navigation: NavigationItem[] = [
-  { label: 'home', link: '/' },
+  { label: 'home', link: `/${locale}/` },
   {
     label: 'diensten',
-    link: '/diensten',
+    link: `/${locale}/diensten`,
     subitems: [
-      {
-        label: 'vertalingen',
-        link: '/diensten/vertalingen',
-        subitems: [
-          { label: 'juridische', link: '/diensten/vertalingen/juridische' },
-          { label: 'commerciele', link: '/diensten/vertalingen/commerciele' },
-          { label: 'literaire', link: '/diensten/vertalingen/literaire' },
-        ],
-      },
-      { label: 'revisie', link: '/diensten/revisie' },
-      {
-        label: 'taalanalyse',
-        link: '/diensten/taalanalyse',
-        subitems: [{ label: 'arabisch', link: '/diensten/taalanalyse/arabisch-levantijns' }],
-      },
+      { label: 'uebersetzungen', link: `/${locale}/diensten/uebersetzungen` },
+      { label: 'revisie', link: `/${locale}/diensten/revisie` },
+      { label: 'sprachanalyse', link: `/${locale}/diensten/sprachanalyse` },
     ],
   },
-  { label: 'over', link: '/over' },
-  { label: 'contact', link: '/contact' },
-  { label: 'blog', link: '/blog' },
-  
+  { label: 'over', link: `/${locale}/over` },
+  { label: 'contact', link: `/${locale}/contact` },
+  { label: 'blog', link: `/${locale}/blog` },
 ];
 
 const locales: Locale[] = ['nl', 'ar', 'en'];
 ---
-
-<nav class="bg-[#EAE5E2] text-[#3D2225] py-4 px-6 font-poppins relative">
-  <div class="container mx-auto flex items-center justify-center">
+<nav class="bg-[#EAE5E2] text-[#3D2225] py-4 px-6 font-poppins relative border-b-2 border-[#3D2225]">
+  <div class="container mx-auto flex items-center justify-between">
     <!-- Linke Navigation -->
-    <ul class="flex space-x-28 text-lg font-thin">
+    <ul class="hidden md:flex space-x-20 text-lg font-thin">
       {navigation.slice(0, 3).map((item) => (
         <li class="relative group">
           <a href={item.link} class="translatable hover:text-[#B4533A] transition duration-300" data-key={item.label}>
-            {t[item.label]}
+            {t[item.label as keyof typeof t] || item.label}
           </a>
           {item.subitems && (
-            <ul class="absolute left-0 bg-[#EAE5E2] text-left py-2 px-4 shadow-md hidden group-hover:block pt-2 w-64">
-              {item.subitems.map((subitem) => (
+            <ul class="absolute left-0 bg-[#EAE5E2] text-left py-2 px-4 shadow-md hidden group-hover:block pt-2 w-64 z-50">
+              {item.subitems.map((subitem: NavigationItem) => (
                 <li class="hover:text-[#CB895D] transition duration-300">
-                  {subitem.subitems ? (
-                    <div>
-                      <span class="font-bold translatable" data-key={subitem.label}>
-                        {t[subitem.label]}
-                      </span>
-                      <ul class="pl-4 pt-2">
-                        {subitem.subitems.map((nestedSubitem) => (
-                          <li>
-                            <a href={nestedSubitem.link} class="hover:text-[#B4533A]">
-                              {t[nestedSubitem.label]}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : (
-                    <a href={subitem.link} class="translatable" data-key={subitem.label}>
-                      {t[subitem.label]}
-                    </a>
-                  )}
+                  <a href={subitem.link} class="translatable" data-key={subitem.label}>
+                    {t[subitem.label as keyof typeof t] || subitem.label}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -80,36 +51,119 @@ const locales: Locale[] = ['nl', 'ar', 'en'];
     </ul>
 
     <!-- Logo -->
-    <div class="mx-40">
-      <img src="/src/assets/logo.png" alt="KALAM Logo" class="h-20">
+    <div class="flex justify-center md:mx-auto">
+      <img src="/src/assets/logo.png" alt="KALAM Logo" class="h-12 md:h-16">
     </div>
 
     <!-- Rechte Navigation -->
-    <ul class="flex space-x-28 text-lg font-thin">
-      {navigation.slice(3).map((item) => (
-        <li class="relative group">
+    <div class="hidden md:flex items-center space-x-20">
+      <ul class="flex space-x-8 text-lg font-thin">
+        {navigation.slice(3).map((item) => (
+          <li class="relative group">
+            <a href={item.link} class="translatable hover:text-[#B4533A] transition duration-300" data-key={item.label}>
+              {t[item.label as keyof typeof t] || item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Sprachumschaltung -->
+      <div class="flex space-x-4">
+        {locales.map((loc) => (
+          <button
+            data-locale={loc}
+            class={`language-switcher px-3 py-1 rounded-lg ${
+              loc === locale
+                ? 'bg-[#3D2225] text-[#EAE5E2]'
+                : 'hover:bg-[#CB895D] hover:text-[#EAE5E2] transition duration-300'
+            }`}
+          >
+            {loc.toUpperCase()}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Hamburger-Menü für Mobilgeräte -->
+    <div class="md:hidden">
+      <button
+        id="menu-toggle"
+        class="text-[#3D2225] hover:text-[#B4533A] focus:outline-none"
+        aria-label="Toggle navigation"
+      >
+        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation für Mobilgeräte -->
+  <div
+    id="nav-menu"
+    class="hidden md:hidden flex flex-col items-center bg-[#EAE5E2] text-lg font-thin py-4 space-y-4"
+  >
+    <ul class="space-y-4">
+      {navigation.map((item) => (
+        <li class="group">
           <a href={item.link} class="translatable hover:text-[#B4533A] transition duration-300" data-key={item.label}>
-            {t[item.label]}
+            {t[item.label as keyof typeof t] || item.label}
           </a>
+          {item.subitems && (
+            <ul class="pl-4 pt-2">
+              {item.subitems.map((subitem: NavigationItem) => (
+                <li class="hover:text-[#CB895D] transition duration-300">
+                  <a href={subitem.link} class="translatable" data-key={subitem.label}>
+                    {t[subitem.label as keyof typeof t] || subitem.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
         </li>
       ))}
     </ul>
-  </div>
 
-  <!-- Sprachauswahl -->
-  <div class="absolute top-4 right-6 flex space-x-4">
-    {locales.map((loc) => (
-      <a
-        href={`/${loc}`}
-        class={`language-switcher px-3 py-1 rounded-lg ${
-          loc === locale
-            ? 'bg-[#3D2225] text-[#EAE5E2]'
-            : 'hover:bg-[#CB895D] hover:text-[#EAE5E2] transition duration-300'
-        }`}
-        data-locale={loc}
-      >
-        {loc.toUpperCase()}
-      </a>
-    ))}
+    <!-- Sprachumschaltung (Mobil) -->
+    <div class="flex justify-center space-x-4 mt-4">
+      {locales.map((loc) => (
+        <button
+          data-locale={loc}
+          class={`language-switcher px-3 py-1 rounded-lg ${
+            loc === locale
+              ? 'bg-[#3D2225] text-[#EAE5E2]'
+              : 'hover:bg-[#CB895D] hover:text-[#EAE5E2] transition duration-300'
+          }`}
+        >
+          {loc.toUpperCase()}
+        </button>
+      ))}
+    </div>
   </div>
 </nav>
+
+<script>
+  // Sprachumschaltung
+  document.querySelectorAll('.language-switcher').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      const locale = target?.getAttribute('data-locale');
+      const currentPath = window.location.pathname.replace(/^\/([a-z]{2})/, '');
+
+      if (locale) {
+        window.history.pushState({}, '', `/${locale}${currentPath}`);
+        location.reload(); // Um die Inhalte neu zu laden
+      }
+    });
+  });
+
+  // Hamburger-Menü
+  const menuToggle = document.getElementById('menu-toggle');
+  const navMenu = document.getElementById('nav-menu');
+
+  if (menuToggle && navMenu) {
+    menuToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('hidden');
+    });
+  }
+</script>

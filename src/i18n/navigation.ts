@@ -1,15 +1,22 @@
+export type Locale = keyof typeof navigationTranslations;
+
+export interface NavigationItem {
+  label: keyof typeof navigationTranslations['en'];
+  link: string;
+  subitems?: NavigationItem[];
+}
+
+// Übersetzungen (Falls noch nicht vorhanden, hier hinzufügen)
 export const navigationTranslations = {
   en: {
     home: 'Home',
     diensten: 'Services',
     vertalingen: 'Translations',
-    juridische: 'Legal Translations & Legalization',
-    commerciele: 'Commercial Translations',
-    literaire: 'Literary Translations',
+    uebersetzungen: 'Translations',
     revisie: 'Revision',
     taalanalyse: 'Language Analysis',
-    arabisch: 'Arabic Levantine',
-    over: 'About KALAM',
+    sprachanalyse: 'Language Analysis', // Neuer Schlüssel hinzugefügt
+    over: 'About',
     contact: 'Contact',
     blog: 'Blog',
   },
@@ -17,13 +24,11 @@ export const navigationTranslations = {
     home: 'Home',
     diensten: 'Diensten',
     vertalingen: 'Vertalingen',
-    juridische: 'Juridische vertalingen & legalisatie',
-    commerciele: 'Commerciële vertalingen',
-    literaire: 'Literaire vertalingen',
+    uebersetzungen: 'Vertalingen',
     revisie: 'Revisie',
     taalanalyse: 'Taalanalyse',
-    arabisch: 'Arabisch Levantijns',
-    over: 'Over KALAM',
+    sprachanalyse: 'Taalanalyse', // Neuer Schlüssel hinzugefügt
+    over: 'Over ons',
     contact: 'Contact',
     blog: 'Blog',
   },
@@ -31,23 +36,12 @@ export const navigationTranslations = {
     home: 'الرئيسية',
     diensten: 'الخدمات',
     vertalingen: 'الترجمة',
-    juridische: 'الترجمة القانونية والتصديق',
-    commerciele: 'الترجمة التجارية',
-    literaire: 'الترجمة الأدبية',
-    revisie: 'المراجعة',
+    uebersetzungen: 'الترجمة',
+    revisie: 'مراجعة',
     taalanalyse: 'تحليل اللغة',
-    arabisch: 'اللهجة العربية الشامية',
-    over: 'حول KALAM',
+    sprachanalyse: 'تحليل اللغة', // Neuer Schlüssel hinzugefügt
+    over: 'حول',
     contact: 'اتصل',
-    blog: 'المدونة',
+    blog: 'مدونة',
   },
 } as const;
-
-export type Locale = keyof typeof navigationTranslations;
-export type NavigationKeys = keyof typeof navigationTranslations['en'];
-
-export interface NavigationItem {
-  label: NavigationKeys;
-  link: string;
-  subitems?: NavigationItem[]; // Rekursive Definition für Untermenüs
-}
